@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nandish Melavanki – Portfolio</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .navbar {
+      background-color: #2c5364;
+    }
+    .navbar-brand, .navbar-nav .nav-link {
+      color: #fff !important;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #ffc107 !important;
+    }
+    .hero-section {
+      height: 100vh;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .section-card {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      margin-bottom: 3rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .section-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #2c5364;
+    }
+    .project-img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    footer {
+      background-color: #2c5364;
+      color: white;
+      padding: 1rem 0;
+      text-align: center;
+    }
+    a {
+      color: #2c5364;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Nandish M.</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#education">Education</a></li>
+          <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+          <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="container">
+      <h1 class="display-4 animate__animated animate__fadeInDown">Hi, I'm Nandish</h1>
+      <p class="lead animate__animated animate__fadeInUp">Electrical and Electronics Engineer passionate about building innovative solutions.</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container py-5">
+
+    <!-- About Section -->
+    <div class="section-card" id="about">
+      <h2 class="section-title">About Me</h2>
+      <p>I am a motivated and detail-oriented student with a strong foundation in programming, data structures, and algorithms. Passionate about technology and eager to contribute to dynamic teams, I have completed hands-on academic projects and certifications in areas such as machine learning and cloud computing.</p>
+      <p>I am actively seeking an opportunity in an IT company where I can apply my knowledge, learn from experienced professionals, and grow as a software engineer.</p>
+    </div>
+
+    <!-- Education Section -->
+    <div class="section-card" id="education">
+      <h2 class="section-title">Education</h2>
+      <ul>
+        <li><strong>2022 - Present:</strong> B.E. in Electrical and Electronics, KLE Technological University, Hubli</li>
+        <li><strong>2020 - 2022:</strong> Classic PU College, Dharwad</li>
+        <li><strong>Up to 2020:</strong> Murarji Desai Residential School, Nidasoshi</li>
+      </ul>
+    </div>
+
+    <!-- Skills Section -->
+    <div class="section-card" id="skills">
+      <h2 class="section-title">Skills</h2>
+      <ul>
+        <li><strong>Languages:</strong> C, C++, Python</li>
+        <li><strong>Machine Learning:</strong> TensorFlow, OpenCV, DenseNet, LSTM</li>
+        <li><strong>Tools:</strong> Git, Linux</li>
+      </ul>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="section-card" id="projects">
+      <h2 class="section-title">Projects</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <img src="images/project1.png" alt="Victim Cache" class="project-img">
+          <h5>Victim Cache Buffer in 16-Core TCMP Architecture</h5>
+          <p>Achieved 15% cache miss rate reduction and 12% performance boost using GEM5 simulator.</p>
+        </div>
+        <div class="col-md-4">
+          <img src="images/image.png" alt="Flood Detection" class="project-img">
+          <h5>Flood Detection Using U-Net</h5>
+          <p>Achieved 92% accuracy in segmenting flooded areas in satellite imagery using U-Net architecture.</p>
+        </div>
+        <div class="col-md-4">
+          <img src="images/image copy.png" alt="Collision Avoidance" class="project-img" style="height: 260px;;">
+          <h5>Collision Avoidance System Using RTOS</h5>
+          <p>Real-time response under 50ms using Cortex M3 and IR sensors for vehicle collision prevention.</p>
+        </div>
+      </div>
+    </div>
+
+<!-- Contact Form Section -->
+<div class="section-card" id="contact">
+  <h2 class="section-title">Contact Me</h2>
+  <form id="contact-form">
+    <div class="mb-3">
+      <label for="user_name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="user_name" name="user_name" required>
+    </div>
+    <div class="mb-3">
+      <label for="user_email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="user_email" name="user_email" required>
+    </div>
+    <div class="mb-3">
+      <label for="subject" class="form-label">Subject</label>
+      <input type="text" class="form-control" id="subject" name="subject" required>
+    </div>
+    <div class="mb-3">
+      <label for="message" class="form-label">Message</label>
+      <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Send Message</button>
+    <div id="form-status" class="mt-3"></div>
+  </form>
+
+  <!-- Social Links -->
+  <div class="mt-4">
+    <h5>Find me on</h5>
+    <a href="https://www.linkedin.com/in/nandishmelavanki" target="_blank" class="btn btn-outline-primary me-2">
+      LinkedIn
+    </a>
+    <a href="https://github.com/melavankinandish" target="_blank" class="btn btn-outline-dark">
+      GitHub
+    </a>
+  </div>
+</div>
+
+
+<!-- Include EmailJS SDK -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  (function () {
+    emailjs.init("5f71pVSqbKzOl8zxZ"); // Your Public Key
+  })();
+
+  document.getElementById("contact-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    emailjs.sendForm("service_nmotwts", "template_1k3093q", this)
+      .then(function () {
+        document.getElementById("form-status").innerHTML = '<div class="alert alert-success">✅ Message sent successfully!</div>';
+        document.getElementById("contact-form").reset();
+      }, function (error) {
+        console.error("EmailJS error:", error);
+        document.getElementById("form-status").innerHTML = '<div class="alert alert-danger">❌ Failed to send message. Try again later.</div>';
+      });
+  });
+</script>
+
+
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Nandish Melavanki. All rights reserved.</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
