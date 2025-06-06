@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Case Study Portfolio - GE Healthcare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    header {
+      background-color: #232f3e;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+    h1, h2, h3 {
+      color: #232f3e;
+    }
+    section {
+      background: white;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    code, pre {
+      background: #eee;
+      padding: 0.5rem;
+      border-radius: 6px;
+      display: block;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.75rem;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    a.ref {
+      text-decoration: none;
+      color: #1a73e8;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>GE Healthcare - Accelerating Medical Imaging AI on AWS</h1>
+  <p><strong>Portfolio Case Study | AI/ML on AWS | Medical Imaging</strong></p>
+</header>
+
+<section>
+  <h2>1. Business Case</h2>
+  <p>GE Healthcare, a global leader in medical technology and diagnostics, faced the challenge of developing and deploying AI-based medical imaging solutions at scale. Their existing infrastructure, though functional, lacked the speed, scalability, and flexibility required for modern AI workflows. They needed a platform that could support rapid experimentation, high-performance computing, and streamlined deployment while adhering to healthcare industry standards for security and compliance <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</p>
+  <p>Medical imaging, such as CT scans, MRIs, and X-rays, generate vast volumes of complex data. Manually analyzing this data is not only time-consuming but also prone to human error. GE Healthcare wanted to automate this process using AI models capable of detecting anomalies, classifying scans, and segmenting critical regions, such as tumors or organs <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</p>
+  <p>By leveraging AWS’s cloud-based infrastructure and AI services, GE Healthcare was able to build a robust and scalable platform for end-to-end machine learning (ML). AWS enabled them to securely store medical images, run training jobs at scale, automate labeling tasks, and deploy models globally—all while ensuring compliance with standards like HIPAA and GDPR <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</p>
+  <p>This case study demonstrates how AWS services like Amazon SageMaker, S3, and Ground Truth were integrated to streamline the lifecycle of medical imaging AI—from data ingestion and preprocessing to model training, inference, and delivery—making healthcare more intelligent and accessible <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</p>
+</section>
+
+<section>
+  <h2>2. Algorithms & Data Structures</h2>
+
+  <h3>🔹 Convolutional Neural Networks (CNNs)</h3>
+  <p>Convolutional Neural Networks (CNNs) are a type of deep learning model particularly effective for image-related tasks. In the context of GE Healthcare, CNNs are used to process and analyze medical scans such as X-rays and MRIs. CNNs work by applying convolutional filters that slide over the input image to capture features like edges, textures, and patterns <a class="ref" href="https://cs231n.github.io/convolutional-networks/" target="_blank">[3]</a>.</p>
+  <img src="images/cnn.jpeg" alt="Funny animation" width="400" style="margin-right: 100px;">  <img src="images/cnn2.jpeg" alt="Funny animation" width="400">
+  <p>CNNs enhance the system by eliminating the need for manual feature extraction. Unlike traditional ML models that require hand-crafted features, CNNs learn what to extract directly from the raw data <a class="ref" href="https://cs231n.github.io/convolutional-networks/" target="_blank">[3]</a>.</p>
+
+  <h3>🔹 U-Net for Image Segmentation</h3>
+  <p>U-Net is a specialized CNN architecture designed for biomedical image segmentation. Unlike classification models that predict a label for an entire image, segmentation models assign a label to each pixel <a class="ref" href="https://arxiv.org/abs/1505.04597" target="_blank">[2]</a>.</p>
+  <img src="images/unet2 copy.png" alt="Funny animation" width="400" style="margin-right: 100px;">
+  <p>U-Net follows an encoder-decoder structure: the encoder compresses the image to learn context, while the decoder reconstructs it to match the original resolution, producing a segmented output. Skip connections between encoder and decoder layers preserve spatial details <a class="ref" href="https://arxiv.org/abs/1505.04597" target="_blank">[2]</a>.</p>
+  <img src="images/CNN_alias_Unet.jpeg" alt="Funny animation" width="400" style="margin-right: 100px;">
+
+  <h3>🔹 Sagemaker Pipelines (DAG-based)</h3>
+  <p>AWS SageMaker Pipelines enable building and automating ML workflows using Directed Acyclic Graphs (DAGs). Each step—data preprocessing, model training, evaluation, and deployment—is a node in the graph <a class="ref" href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html" target="_blank">[4]</a>.</p>
+  <p>In GE Healthcare's workflow, raw images are stored in Amazon S3 and passed through a labeling stage using Ground Truth. The labeled data is preprocessed and sent to SageMaker for training CNN or U-Net models <a class="ref" href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html" target="_blank">[4]</a>.</p>
+  <img src="images/sagemaker copy.jpeg" alt="Funny animation" width="400" style="margin-right: 100px;">
+  <h3>💡 Inference Code Example</h3>
+  <pre><code>import boto3
+
+runtime = boto3.client('sagemaker-runtime')
+
+response = runtime.invoke_endpoint(
+    EndpointName='gehealthcare-xray-model',
+    ContentType='application/x-image',
+    Body=open('patient_scan.jpg', 'rb').read()
+)
+
+print(response['Body'].read())</code></pre>
+</section>
+
+<section>
+  <h2>3. Models & Figures</h2>
+  <p>The architecture below illustrates how GE Healthcare integrated AWS components to build an AI-powered medical imaging pipeline <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>:</p>
+  <img src="images/casestudy2 copy.png" alt="Funny animation" width="400">  
+  <p>Doctors upload scans through a secure web interface. The API Gateway forwards requests to backend services. Data is stored in an S3 Data Lake and passed through SageMaker where models are trained and executed <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</p>
+</section>
+
+<section>
+  <h2>4. Efficiency Analysis</h2>
+  <table>
+    <tr>
+      <th>Metric</th>
+      <th>Traditional Infra</th>
+      <th>AWS ML Platform</th>
+      <th>Detailed Reason</th>
+    </tr>
+    <tr>
+      <td>Time to Train Model</td>
+      <td>3–4 weeks</td>
+      <td>2–3 days</td>
+      <td>Training large models on-prem took weeks due to limited GPUs and hardware provisioning. AWS provides on-demand, scalable GPU instances, reducing training time drastically <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</td>
+    </tr>
+    <tr>
+      <td>Annotation Efficiency</td>
+      <td>Manual</td>
+      <td>Semi-Automated</td>
+      <td>Manual labeling was slow and inconsistent. AWS Ground Truth enables semi-automated annotation using active learning <a class="ref" href="https://docs.aws.amazon.com/sagemaker/latest/dg/sms.html" target="_blank">[4]</a>.</td>
+    </tr>
+    <tr>
+      <td>Model Deployment Time</td>
+      <td>~1 month</td>
+      <td>Few hours</td>
+      <td>Previously, deploying models required IT coordination, downtime, and manual configuration. SageMaker Pipelines with CI/CD allows automatic and version-controlled deployment in hours <a class="ref" href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html" target="_blank">[4]</a>.</td>
+    </tr>
+    <tr>
+      <td>Security & Compliance</td>
+      <td>Manual Checks</td>
+      <td>HIPAA/GDPR-ready</td>
+      <td>GE had to manually audit systems for compliance. AWS provides built-in certifications, audit trails, and encryption to meet healthcare regulations <a class="ref" href="https://aws.amazon.com/compliance/hipaa-compliance/" target="_blank">[1]</a>.</td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h2>5. Story, References & Connection</h2>
+  <p>Medical imaging plays a crucial role in diagnosing conditions ranging from cancer to fractures. However, interpreting complex scans is labor-intensive and subjective. GE Healthcare recognized the potential of AI to assist radiologists in making faster and more accurate diagnoses <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</p>
+  <p>Using AWS, GE Healthcare built AI models that not only match but sometimes exceed human-level performance in specific tasks like tumor detection or organ segmentation <a class="ref" href="https://arxiv.org/abs/1505.04597" target="_blank">[2]</a>. The synergy between cloud scalability, advanced neural architectures like U-Net, and streamlined workflows with SageMaker Pipelines led to massive improvements in diagnostic speed and quality <a class="ref" href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html" target="_blank">[4]</a>.</p>
+  <p>This case study demonstrates the broader potential of AI in healthcare <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>.</p>
+  <p><strong>References:</strong></p>
+  <ul>
+    <li><a href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1] GE Healthcare on AWS</a></li>
+    <li><a href="https://arxiv.org/abs/1505.04597" target="_blank">[2] U-Net: Convolutional Networks for Biomedical Image Segmentation</a></li>
+    <li><a href="https://cs231n.github.io/convolutional-networks/" target="_blank">[3] CNNs by Stanford CS231n</a></li>
+    <li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines.html" target="_blank">[4] AWS SageMaker Pipelines</a></li>
+  </ul>
+</section>
+
+<section>
+  <h2>6. Inference</h2>
+  <p>GE Healthcare's adoption of AWS cloud and AI services revolutionized their medical imaging pipeline <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>. The company was able to accelerate its model development cycle, automate critical workflows, and reduce errors through AI-based diagnosis.</p>
+  <p>Through scalable infrastructure, advanced machine learning, and intelligent automation, GE Healthcare delivered precision medicine on a global scale. AWS enabled a secure, compliant, and powerful backbone that helped bridge the gap between research and clinical application <a class="ref" href="https://aws.amazon.com/compliance/hipaa-compliance/" target="_blank">[1]</a>.</p>
+  <p>In summary, this case study showcases how AWS empowers healthcare organizations to innovate responsibly, scale efficiently, and improve lives through technology <a class="ref" href="https://aws.amazon.com/solutions/case-studies/ge-healthcare/" target="_blank">[1]</a>. The integration of CNNs, U-Net models, and DAG-based pipelines on AWS represents a step forward in the intelligent automation of healthcare diagnostics.</p>
+</section>
+
+</body>
+</html>
+<script>
+  document.getElementById('contact-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const statusDiv = document.getElementById('form-status');
+
+    fetch('https://example.com/api/contact', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      statusDiv.textContent = 'Message sent successfully!';
+      statusDiv.style.color = 'green';
+    })
+    .catch(error => {
+      statusDiv.textContent = 'Error sending message.';
+      statusDiv.style.color = 'red';
+    });
+  });
