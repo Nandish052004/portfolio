@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Case Study Portfolio - Amazon Robotics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    header {
+      background-color: #232f3e;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+    h1, h2, h3 {
+      color: #232f3e;
+    }
+    section {
+      background: white;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    code, pre {
+      background: #eee;
+      padding: 0.5rem;
+      border-radius: 6px;
+      display: block;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.75rem;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    a.ref {
+      text-decoration: none;
+      color: #1a73e8;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p><strong>Amazon Robotics – Smart Warehouse Navigation with Graph Algorithms and AWS IoT</strong></p>
+</header>
+
+<section>
+  <h2>1. Business Case</h2>
+  <p>Amazon’s fulfillment centers serve as the heart of its global e-commerce operations, handling millions of products that are ordered and shipped daily. To ensure rapid delivery and accurate inventory management, Amazon employs hundreds of thousands of autonomous mobile robots (AMRs), originally developed by Kiva Systems, now known as Amazon Robotics <a class="ref" href="https://www.aboutamazon.com/news/operations/how-robots-help-amazon-ship-packages-on-time" target="_blank">[1]</a>.</p>
+
+  <p>These robots automate repetitive warehouse tasks such as locating and transporting inventory shelves to human operators for order picking. This drastically reduces the amount of walking employees need to do, boosting operational speed and lowering labor fatigue. Instead of people going to items, items come to people — a fundamental shift in warehouse logistics <a class="ref" href="https://www.aboutamazon.com/news/operations/how-robots-help-amazon-ship-packages-on-time" target="_blank">[1]</a>.</p>
+
+  <p>To coordinate robot movements efficiently and avoid collisions in a fast-paced environment, Amazon designs the warehouse floor as a virtual graph. Using graph algorithms like A*, robots identify the most efficient route to their target destination. These decisions are not only calculated on-device but also augmented via real-time updates from AWS cloud services, which handle large-scale coordination, monitoring, and load balancing <a class="ref" href="https://aws.amazon.com/iot/" target="_blank">[2]</a>.</p>
+
+  <p>By combining robotics with cloud computing and graph theory, Amazon creates a warehouse ecosystem that is not only automated but also intelligent. This results in improved order accuracy, faster fulfillment, and significant cost reductions.</p>
+</section>
+
+<section>
+  <h2>2. Algorithms & Data Structures</h2>
+  <p>Amazon's warehouse navigation system is built around graph theory. The warehouse is modeled as a graph where every important location (like shelves, stations, or junctions) is a node, and the walkable paths between them are edges. This allows robots to calculate the best path between any two points on the floor.</p>
+
+  <p>The <strong>A*</strong> algorithm plays a central role here. It is a pathfinding algorithm that combines the best parts of Dijkstra’s algorithm (shortest path) and greedy search (goal-focused). By estimating how close a path is to the destination, it helps robots choose faster and more efficient routes in real time, especially when obstacles or other robots require route changes <a class="ref" href="https://www.redblobgames.com/pathfinding/a-star/introduction.html" target="_blank">[3]</a>.</p>
+
+  <p>Key data structures used include:</p>
+  <ul>
+    <li><strong>Priority Queue:</strong> Selects the next most promising node quickly based on cost and distance.</li>
+    <li><strong>Adjacency List:</strong> Efficiently stores which nodes are connected to each other, saving memory and speeding up lookup time.</li>
+    <li><strong>Dynamic Edge Weights:</strong> Allows path costs to change in real time based on conditions like blocked paths, traffic, or battery levels. This information comes from AWS IoT telemetry updates.</li>
+  </ul>
+
+  <p>For instance, if multiple robots are approaching an intersection, the robot closest to it gets priority while others reroute or wait. These decisions happen in milliseconds, powered by local edge computing (Greengrass) and supported by the cloud.</p>
+  <img src="images/greengrass copy.png" alt="Funny animation" width="400">  
+</section>
+
+<section>
+  <h3>3. Architecture & Models</h3>
+  <p>The system architecture integrates both edge and cloud computing. Robots operate independently for local decisions but remain connected to the cloud for global synchronization. Here's a step-by-step breakdown of how the system functions <a class="ref" href="https://docs.aws.amazon.com/greengrass/v2/developerguide/what-is-aws-iot-greengrass.html" target="_blank">[2]</a>:</p>
+  <img src="images/casestudy4..png" alt="Funny animation" width="400">  
+  <p>1. <strong>Robot Sensor:</strong> Each robot continuously collects data about its position, battery level, and surrounding environment.</p>
+  <p>2. <strong>AWS IoT Core:</strong> Securely sends this telemetry data to the cloud, where it's processed and acted upon in real time.</p>
+  <p>3. <strong>AWS Lambda:</strong> Handles coordination logic — such as reassigning paths, balancing traffic, or logging data.</p>
+  <p>4. <strong>DynamoDB:</strong> Records telemetry and historical movement data for optimization, analytics, and debugging.</p>
+  <p>5. <strong>AWS Greengrass:</strong> Runs the A* algorithm locally on robots so they don’t have to wait for cloud input, reducing latency in critical navigation decisions.</p>
+</section>
+<section>
+<!-- Add this to your HTML body -->
+<h2>Interactive A* Pathfinding Simulation</h2>
+<p>Click to set Start (green), Goal (red), then click to draw walls (black). Press "Find Path".</p>
+<canvas id="grid" width="500" height="500"></canvas>
+<button onclick="aStar()">Find Path</button>
+
+<script>
+const cols = 20, rows = 20, size = 25;
+let start = null, end = null;
+const canvas = document.getElementById("grid");
+const ctx = canvas.getContext("2d");
+const grid = [...Array(rows)].map(() => Array(cols).fill(0)); // 0=empty, 1=wall
+
+canvas.addEventListener("click", (e) => {
+  const x = Math.floor(e.offsetX / size);
+  const y = Math.floor(e.offsetY / size);
+  if (!start) { start = {x, y}; grid[y][x] = 'S'; }
+  else if (!end) { end = {x, y}; grid[y][x] = 'E'; }
+  else if (grid[y][x] === 0) { grid[y][x] = 1; }
+  draw();
+});
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (grid[y][x] === 1) ctx.fillStyle = "black";
+      else if (x === start?.x && y === start?.y) ctx.fillStyle = "green";
+      else if (x === end?.x && y === end?.y) ctx.fillStyle = "red";
+      else ctx.fillStyle = "#eee";
+      ctx.fillRect(x * size, y * size, size - 1, size - 1);
+    }
+  }
+}
+
+function neighbors(x, y) {
+  return [[x+1,y],[x-1,y],[x,y+1],[x,y-1]].filter(([nx, ny]) =>
+    nx >= 0 && ny >= 0 && nx < cols && ny < rows && grid[ny][nx] !== 1
+  );
+}
+
+function heuristic(a, b) {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y); // Manhattan
+}
+
+function aStar() {
+  const open = [{...start, g:0, f:heuristic(start, end), path: []}];
+  const visited = new Set();
+  while (open.length) {
+    open.sort((a,b) => a.f - b.f);
+    const current = open.shift();
+    const key = `${current.x},${current.y}`;
+    if (visited.has(key)) continue;
+    visited.add(key);
+
+    if (current.x === end.x && current.y === end.y) {
+      current.path.push([current.x, current.y]);
+      for (let [x,y] of current.path) {
+        if ((x !== start.x || y !== start.y) && (x !== end.x || y !== end.y)) {
+          ctx.fillStyle = "#00f";
+          ctx.fillRect(x * size, y * size, size - 1, size - 1);
+        }
+      }
+      return;
+    }
+
+    for (let [nx, ny] of neighbors(current.x, current.y)) {
+      const newG = current.g + 1;
+      open.push({
+        x: nx, y: ny,
+        g: newG,
+        f: newG + heuristic({x: nx, y: ny}, end),
+        path: [...current.path, [current.x, current.y]]
+      });
+    }
+  }
+  alert("No path found.");
+}
+
+draw();
+</script>
+<section>
+  <h2>📘 How It Works: A* Pathfinding Simulation in Warehouse</h2>
+  <p><strong>🔍 What This Shows:</strong> This simulation represents a warehouse robot, like Amazon’s AMRs, finding the shortest path on a grid. Each square on the grid stands for a specific point on the warehouse floor.</p>
+
+  <ul>
+    <li>🟩 First click → Sets the robot's starting position.</li>
+    <li>🟥 Second click → Marks the destination (e.g., a shelf or exit).</li>
+    <li>⬛ Additional clicks → Add walls representing obstacles like shelves or blocked paths.</li>
+    <li>▶️ Click “Find Path” → Triggers the A* algorithm to calculate the optimal route.</li>
+  </ul>
+
+  <p><strong>🚚 What Happens Internally:</strong></p>
+  <ol>
+    <li>The grid is treated as the warehouse floor, broken into cells (nodes).</li>
+    <li>The A* algorithm begins from the robot’s position:
+      <ul>
+        <li>Calculates <strong>g</strong>: cost from start node</li>
+        <li>Estimates <strong>h</strong>: cost to goal using Manhattan Distance</li>
+        <li>Total cost <strong>f = g + h</strong></li>
+      </ul>
+    </li>
+    <li>The algorithm always selects the next move with the lowest f (using Priority Queue logic).</li>
+    <li>It avoids obstacles and already-visited nodes.</li>
+    <li>The search stops when the goal is reached.</li>
+    <li>The final path is shown in blue (optimized route).</li>
+  </ol>
+
+  <p><strong>📦 Warehouse Equivalents:</strong></p>
+  <ul>
+    <li><strong>Grid Cell</strong> → Shelf location or aisle point</li>
+    <li><strong>Wall (⬛)</strong> → Obstructed path or another robot</li>
+    <li><strong>Path (🔵)</strong> → Optimized route taken by the robot</li>
+    <li><strong>A* + Priority Queue</strong> → Local decision-making (AWS Greengrass)</li>
+    <li><strong>Real-time Updates</strong> → Managed by AWS IoT and Lambda functions</li>
+  </ul>
+
+  <p><strong>🧠 Data Structures Used:</strong></p>
+  <ul>
+    <li>Graph (Grid)</li>
+    <li>Heuristic Function (Manhattan Distance)</li>
+    <li>Visited Set (tracks already-checked nodes)</li>
+    <li>Priority Queue (selects most optimal next node)</li>
+    <li>Path Reconstruction (from parent node mappings)</li>
+  </ul>
+
+  <p><strong>🏁 End Goal:</strong> Build a robot routing system that is fast, safe, and intelligent — ideal for a dynamic warehouse environment.</p>
+</section>
+
+</section>
+
+<section>
+  <h2>4. Efficiency Analysis</h2>
+  <p>Implementing graph-based navigation with AWS infrastructure has brought substantial improvements across various warehouse KPIs. These improvements aren't just about speed but also about safety, energy efficiency, and predictability.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Before Automation</th>
+        <th>With AWS + Graph Algo</th>
+        <th>Reason for Improvement</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Picking Efficiency</td>
+        <td>100 units/hour</td>
+        <td>300+ units/hour</td>
+        <td>AMRs deliver shelves directly to humans, removing the need for walking. This reduces fatigue and enables workers to focus only on picking, which increases speed and accuracy.</td>
+      </tr>
+      <tr>
+        <td>Robot Idle Time</td>
+        <td>30%</td>
+        <td>&lt;10%</td>
+        <td>Real-time routing decisions help distribute workloads better and avoid congestion zones. Idle robots are immediately reassigned or rerouted using AWS Lambda and Greengrass decisions.</td>
+      </tr>
+      <tr>
+        <td>Fulfillment Delay</td>
+        <td>Up to 1 hour</td>
+        <td>&lt;10 minutes</td>
+        <td>Fast edge-level decisions using A* and Greengrass allow continuous motion even during peak hours. Cloud alerts from IoT Core help anticipate and resolve bottlenecks before they affect delivery.</td>
+      </tr>
+      <tr>
+        <td>System Downtime</td>
+        <td>High (manual)</td>
+        <td>&lt;1%</td>
+        <td>Hybrid architecture ensures that even if cloud connectivity drops, robots continue operating locally. Fault tolerance is enhanced through AWS backup logic and self-healing services.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>5. Story, References & Connection</h2>
+  <p>This case study embodies how cloud computing, robotics, and classical computer science converge to solve modern logistical problems. The use of data structures like graphs and priority queues, combined with real-time edge computing using AWS Greengrass, results in smarter robots capable of autonomous and collective decision-making. These innovations are not theoretical — they are actively shaping Amazon’s day-to-day operations across the globe.</p>
+
+  <p>The navigation algorithms discussed here are directly supported by AWS services like IoT Core, Greengrass, Lambda, and DynamoDB, allowing massive scalability and robust coordination. Future extensions include predictive rerouting using ML models on Amazon SageMaker, proving that the system is continuously evolving. This story serves as a real-world example for students and engineers interested in applied graph theory, AI, and cloud architecture.</p>
+  <ul>
+    <li><a href="https://www.aboutamazon.com/news/operations/how-robots-help-amazon-ship-packages-on-time" target="_blank">Amazon Robotics – Official</a></li>
+    <li><a href="https://docs.aws.amazon.com/greengrass/v2/developerguide/what-is-aws-iot-greengrass.html" target="_blank">AWS IoT Greengrass Documentation</a></li>
+    <li><a href="https://www.redblobgames.com/pathfinding/a-star/introduction.html" target="_blank">A* Pathfinding Visualization – Red Blob Games</a></li>
+  </ul>
+</section>
+
+<section>
+  <h2>6. Inference</h2>
+  <p>The Amazon Robotics case study showcases a transformative model for warehouse automation. By combining classical graph algorithms like A* with scalable cloud infrastructure (AWS), Amazon has created a navigation system that is both autonomous and intelligent. This integration dramatically boosts efficiency, safety, and scalability of operations.</p>
+
+  <p>This serves as a powerful demonstration of how algorithmic logic and cloud-native services can solve complex, real-world problems. For anyone interested in automation, distributed systems, or AI, Amazon’s robotic fulfillment is a benchmark in modern industrial engineering and digital transformation.</p>
+</section>
+
+</body>
+</html>

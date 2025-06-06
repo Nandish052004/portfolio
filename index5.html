@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Case Study Portfolio - Discovery+</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    header {
+      background-color: #232f3e;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+    h1, h2, h3 {
+      color: #232f3e;
+    }
+    section {
+      background: white;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    code, pre {
+      background: #eee;
+      padding: 0.5rem;
+      border-radius: 6px;
+      display: block;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.75rem;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Discovery+ Personalization with Amazon Personalize</h1>
+    <p><strong>Portfolio Case Study | AI/ML on AWS | Streaming Personalization</strong></p>
+  </header>
+
+<section>
+    <h2>1. Business Case</h2>
+    <p>Discovery+, a leading entertainment and streaming company, aimed to offer a seamless and deeply personalized viewing experience to its diverse user base. Facing fierce competition from global streaming giants, the company set an ambitious goal: to enhance viewer engagement and retention by providing smart content recommendations tailored to individual preferences. This objective demanded advanced machine learning capabilities and scalable infrastructure.</p>
+    <p>Amazon Web Services (AWS) provided Discovery+ with a powerful suite of tools and services to achieve this transformation. Using Amazon Personalize—a fully managed ML service—the company was able to build real-time recommendation engines without needing extensive ML expertise. AWS helped Discovery+ simplify its infrastructure, accelerate its time to deployment, and most importantly, improve the quality and personalization of content delivery for millions of users globally.<a href="#ref1">[1]</a></p>
+    <p>By integrating AWS Personalize into its platform, Discovery+ moved away from static, rule-based systems toward dynamic models that learn from user behavior. This shift not only improved user satisfaction but also contributed to key business metrics like click-through rate (CTR), watch time, and content discovery effectiveness. These improvements align perfectly with Discovery+'s goal of delivering intuitive, engaging, and relevant entertainment to its audience across genres, devices, and regions.</p>
+  </section>
+
+
+  <section>
+  <h2>2. Algorithms & Data Structures </h2>
+  <p>
+    The core intelligence behind Discovery+’s recommendation engine lies in a combination of machine learning algorithms and efficient data structures. These help understand what the user likes, predict future preferences, and serve relevant content instantly. Let’s break down each component:
+  </p>
+  <img src="images/Collaborative_Filtering_in_Recommender_Systems.jpg" alt="Funny animation" width="400">  
+  <h3>🔹 Collaborative Filtering</h3>
+  <p>
+    This is the heart of modern recommendation systems. The idea is simple: if two users watched similar shows before, they might enjoy similar shows in the future. It uses a <strong>user-item interaction matrix</strong> (like a giant Excel sheet) where rows are users, columns are items (videos), and cells record interactions (like a rating or watch event).
+  </p>
+  <img src="images/Collaborative_filtering.gif" alt="Funny animation" width="400">  
+  <ul>
+    <li>Example: If User A and User B both watched Shows X and Y, and User A also watched Show Z, then User B might like Show Z too.</li>
+    <li>This matrix is usually very sparse (most people don’t watch everything), so we need techniques like matrix factorization (explained next) to make sense of it.</li>
+  </ul>
+  <!-- <p><em>Source:</em> <a href="https://towardsdatascience.com/matrix-factorization-for-recommendation-systems-c3c3e4f7d35f" target="_blank">Matrix Factorization - TowardsDataScience</a></p> -->
+
+
+  <h3>🔹 Matrix Factorization</h3>
+  <p>
+    Since the user-item matrix is sparse (mostly empty), we "compress" it into two smaller matrices using a technique called matrix factorization. One matrix represents user preferences, and the other represents item features.<a href="#ref2">[2]</a>
+  </p>
+  <ul>
+    <li>Imagine we're saying: “User 123 likes thrillers, documentaries, and romantic comedies.” These preferences become a vector: [0.9, 0.4, 0.7]</li>
+    <li>Each movie also has a vector: Movie A = [0.8, 0.2, 0.6]</li>
+    <li>We compute similarity by multiplying these vectors (dot product). Higher the score, more relevant the movie.</li>
+    <li>Amazon Personalize does this using deep matrix factorization under the hood, so you don’t need to build it manually!</li>
+  </ul>
+  <p><em>Reference:</em> <a href="https://towardsdatascience.com/matrix-factorization-for-recommendation-systems-c3c3e4f7d35f" target="_blank">Matrix Factorization - TowardsDataScience</a></p>
+
+
+  <h3>🔹 Nearest Neighbor Search (k-NN)</h3>
+  <p>
+    When new users or items are added (cold start problem), we can’t use past data. Here, <strong>k-nearest neighbor (k-NN)</strong> algorithms come to the rescue:
+  <a href="#ref3">[3]</a></p>
+  <ul>
+    <li>We represent users or items as vectors in a high-dimensional space (like a cloud of dots).</li>
+    <li>We measure similarity using <strong>cosine similarity</strong> or <strong>Euclidean distance</strong>.</li>
+    <li>Example: If a user just watched a nature documentary, we recommend another similar documentary by finding the closest dot (nearest neighbor) in vector space.</li>
+    <li>Efficient search is done using structures like <strong>KD-Trees</strong> or <strong>Ball Trees</strong> to avoid scanning the entire space.</li>
+  </ul>
+  <p><em>Reference:</em> <a href="https://scikit-learn.org/stable/modules/neighbors.html" target="_blank">Nearest Neighbor Search - scikit-learn</a></p>
+
+
+  <h3>🔹 Ranking Algorithms (Learn-to-Rank)</h3>
+  <p>
+    It's not enough to know what the user might like—we also need to rank content in order of relevance. This is where ranking algorithms come in.
+  <a href="#ref4">[4]</a></p>
+  <ul>
+    <li><strong>BPR (Bayesian Personalized Ranking):</strong> Assumes users prefer certain items over others based on implicit signals like watch time, skips, or likes.</li>
+    <li><strong>LambdaRank:</strong> Focuses on adjusting the order of results so that more relevant items come on top based on user behavior.</li>
+    <li>Amazon Personalize uses these under the hood and evaluates using metrics like <strong>Mean Reciprocal Rank (MRR)</strong>—higher score = better ranking.</li>
+  </ul>
+  <p><em>Reference:</em> <a href="https://paperswithcode.com/method/bpr" target="_blank">Bayesian Personalized Ranking - PapersWithCode</a></p>
+  
+
+  <h3>🔸 Summary: Why These Algorithms Work Together</h3>
+  <ul>
+    <li><strong>Collaborative Filtering:</strong> Captures behavior-based patterns.</li>
+    <li><strong>Matrix Factorization:</strong> Compresses data, learns hidden traits.</li>
+    <li><strong>k-NN:</strong> Helps with new users/items.</li>
+    <li><strong>Ranking:</strong> Makes top recommendations more relevant.</li>
+  </ul>
+
+  <h3>🧠 Backend Data Structures Used</h3>
+  <ul>
+    <li><strong>Sparse Matrices:</strong> Used to represent user-item interactions compactly.</li>
+    <li><strong>Hash Maps / Dictionaries:</strong> Used for real-time session-based interaction logs.</li>
+    <li><strong>Vectors & Embeddings:</strong> Used to place users/items in a space for similarity computations.</li>
+    <li><strong>KD-Trees/Ball Trees:</strong> Fast search of similar users/items in multi-dimensional space.</li>
+  </ul>
+
+  <h3>💡 Real Amazon Personalize Runtime API Usage</h3>
+  <p>This Python snippet shows how Discovery+ would fetch recommendations using Amazon Personalize’s API:</p>
+  <pre><code>import boto3
+
+# Create runtime client
+runtime = boto3.client('personalize-runtime')
+
+# Request recommendations for a user
+response = runtime.get_recommendations(
+  campaignArn='arn:aws:personalize:region:account-id:campaign/DiscoveryCampaign',
+  userId='user123'
+)
+
+# Print top item recommendations
+for item in response['itemList']:
+  print("Recommended Item ID:", item['itemId'])</code></pre>
+
+  <a href="#ref1">[1]</a><p>
+    Internally, this fetches recommendations based on the user’s historical interactions. The logic (matrix factorization, collaborative filtering, etc.) is abstracted away, but this gives you real-time results with low latency.
+  </p>
+  <p><em>Reference:</em> <a href="https://docs.aws.amazon.com/personalize/latest/dg/what-is-personalize.html" target="_blank">Amazon Personalize Documentation</a></p>
+
+</section>
+
+
+  <section>
+    <h2>3. Models & Figures</h2>
+    <p>The architecture used by Discovery+ demonstrates how cloud-native services simplify AI/ML deployment:</p>
+    <img src="images/casestudy1 copy.png" alt="Funny animation" width="400">  
+    <p><strong>Explanation:</strong> Users interact with the app, which triggers an AWS Lambda function. This function calls the Amazon Personalize API to get real-time, personalized content. The training data is periodically updated from Amazon S3 and DynamoDB.</p>
+    <p>ML models are trained automatically on historical interaction logs. Amazon Personalize manages model retraining, evaluation, and deployment seamlessly.</p>
+
+  </section>
+
+  <section>
+    <h2>4. Efficiency Analysis</h2>
+    <p>The transition from a rule-based recommendation system to a machine learning-powered engine delivered the following improvements:</p>
+    <table>
+      <tr>
+        <th>Metric</th>
+        <th>Before (Rule-Based)</th>
+        <th>After (Amazon Personalize)</th>
+        <th>Detailed Reason</th>
+      </tr>
+      <tr>
+        <td>CTR (Click-Through Rate)</td>
+        <td>1.8%</td>
+        <td>5.6%</td>
+        <td>Rule-based engines recommend based on popularity, leading to irrelevant content. Amazon Personalize adapts to user interests using behavioral signals and collaborative filtering, significantly improving user engagement.</td>
+      </tr>
+      <tr>
+        <td>Latency per Recommendation</td>
+        <td>350ms</td>
+        <td>80ms</td>
+        <td>Static lists stored in relational databases have slower access. Amazon Personalize uses optimized, distributed infrastructure and APIs, reducing the time to respond with recommendations.</td>
+      </tr>
+      <tr>
+        <td>Development Time</td>
+        <td>3 months</td>
+        <td>2 weeks</td>
+        <td>Manual ML pipeline development requires setting up infrastructure, model tuning, and monitoring. Amazon Personalize automates training, deployment, and scaling, reducing the engineering effort.</td>
+      </tr>
+      <tr>
+        <td>Scalability</td>
+        <td>Manual updates, region-specific</td>
+        <td>Global, Real-time, Scalable</td>
+        <td>Legacy systems require manual scaling and regional tuning. Amazon Personalize automatically scales globally and handles real-time predictions across millions of users without configuration overhead.</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>5. Story, References & Connection</h2>
+    <p>Streaming platforms like Netflix, Hulu, and Discovery+ live or die by their ability to recommend the right content. Personalization ensures that users discover relevant content without effort. This case shows how AI is used not just for automation, but for creating better digital experiences.</p>
+    <p><strong>Why AWS?</strong> AWS provides all the infrastructure, tools, and automation needed for ML/AI deployment at production scale. Discovery Inc. leveraged this to focus on their core problem rather than worrying about servers, scaling, and tooling.<a href="#ref1">[1]</a></p>
+    <p><strong>References:</strong></p>
+    <!-- <ul>
+      <li><a href="https://docs.aws.amazon.com/personalize/latest/dg/what-is-personalize.html" target="_blank">Amazon Personalize Documentation</a></li>
+      <li><a href="https://towardsdatascience.com/matrix-factorization-for-recommendation-systems-c3c3e4f7d35f" target="_blank">Matrix Factorization - TowardsDataScience</a></li>
+      <li><a href="https://scikit-learn.org/stable/modules/neighbors.html" target="_blank">Nearest Neighbor Search - scikit-learn</a></li>
+      <li><a href="https://paperswithcode.com/method/bpr" target="_blank">Bayesian Personalized Ranking - PapersWithCode</a></li>
+    </ul> -->
+    <ol>
+    <li id="ref1"><a href="https://docs.aws.amazon.com/personalize/latest/dg/what-is-personalize.html" target="_blank">Amazon Personalize Documentation</a></li>
+    <li id="ref2"><a href="https://towardsdatascience.com/matrix-factorization-for-recommendation-systems-c3c3e4f7d35f" target="_blank">Matrix Factorization - TowardsDataScience</a></li>
+    <li id="ref3"><a href="https://scikit-learn.org/stable/modules/neighbors.html" target="_blank">Nearest Neighbor Search - scikit-learn</a></li>
+    <li id="ref4"><a href="https://paperswithcode.com/method/bpr" target="_blank">Bayesian Personalized Ranking - PapersWithCode</a></li>
+  </ol>
+  </section>
+
+  <section>
+    <h2>6. Inference</h2>
+    <p>The integration of Amazon Personalize helped Discovery+ achieve its goals of improved user experience and increased engagement. By using AI/ML in the cloud, they could iterate faster, deploy reliably, and personalize at a scale previously not possible.</p>
+    <p><strong>Future Scope:</strong> Adding contextual bandits, sentiment analysis from user reviews, and edge deployment using AWS IoT Greengrass could further refine the experience.</p>
+  </section>
+
+</body>
+</html>
+<script>
+  document.getElementById('contact-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+
+    fetch('https://example.com/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('form-status').innerText = 'Message sent successfully!';
+      event.target.reset();
+    })
+    .catch(error => {
+      document.getElementById('form-status').innerText = 'Error sending message.';
+      console.error('Error:', error);
+    });
+  });
